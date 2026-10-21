@@ -1,0 +1,93 @@
+text to speech
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Text to Speech Converter"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp" />
+
+    <EditText
+        android:id="@+id/editTextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter text"
+        android:inputType="textMultiLine"
+        android:minHeight="100dp"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/speakButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speak"
+        android:layout_gravity="center" />
+
+</LinearLayout>
+
+
+java
+
+package com.example.studentapp;
+
+import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity
+        implements TextToSpeech.OnInitListener {
+
+    TextToSpeech tts;
+    EditText editTextInput;
+    Button speakButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextInput = findViewById(R.id.editTextInput);
+        speakButton = findViewById(R.id.speakButton);
+        speakButton.setEnabled(false);
+
+        tts = new TextToSpeech(this, this);
+
+        speakButton.setOnClickListener(v -> {
+            String text = editTextInput.getText().toString().trim();
+
+            if (!text.isEmpty()) {
+                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+            } else {
+                Toast.makeText(this, "Enter text",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            tts.setLanguage(Locale.US);
+            speakButton.setEnabled(true);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+}

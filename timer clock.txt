@@ -1,0 +1,124 @@
+timer clock
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#F5F5F5">
+
+    <TextView
+        android:id="@+id/timerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="00:00:00"
+        android:textSize="48sp"
+        android:textColor="#000000"
+        android:fontFamily="sans-serif-bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timerText"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/pauseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+java
+package com.example.studentapp;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    TextView timerText;
+    Button startButton, pauseButton, resetButton;
+    Handler handler = new Handler();
+    long startTime = 0L, time = 0L, buffer = 0L;
+    boolean isRunning = false;
+
+    Runnable updateTimer = new Runnable() {
+        public void run() {
+            time = buffer + System.currentTimeMillis() - startTime;
+
+            int secs = (int) (time / 1000);
+            int mins = secs / 60;
+            int hrs = mins / 60;
+
+            secs %= 60;
+            mins %= 60;
+
+            timerText.setText(String.format(
+                    "%02d:%02d:%02d", hrs, mins, secs));
+
+            handler.postDelayed(this, 1000);
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        timerText = findViewById(R.id.timerText);
+        startButton = findViewById(R.id.startButton);
+        pauseButton = findViewById(R.id.pauseButton);
+        resetButton = findViewById(R.id.resetButton);
+
+        startButton.setOnClickListener(v -> {
+            if (!isRunning) {
+                startTime = System.currentTimeMillis();
+                handler.post(updateTimer);
+                isRunning = true;
+            }
+        });
+
+        pauseButton.setOnClickListener(v -> {
+            if (isRunning) {
+                buffer = time;
+                handler.removeCallbacks(updateTimer);
+                isRunning = false;
+            }
+        });
+
+        resetButton.setOnClickListener(v -> {
+            handler.removeCallbacks(updateTimer);
+            startTime = 0L;
+            time = 0L;
+            buffer = 0L;
+            isRunning = false;
+            timerText.setText("00:00:00");
+        });
+    }
+}

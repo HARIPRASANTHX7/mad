@@ -1,0 +1,76 @@
+stand alone
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stand Alone Debugging Tool"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center" />
+
+    <EditText
+        android:id="@+id/debugInputEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter debug message"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send to Debugger"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:id="@+id/debugOutputTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp" />
+
+</LinearLayout>
+
+java
+
+package com.example.studentapp;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText debugInputEditText;
+    Button sendButton;
+    TextView debugOutputTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        debugInputEditText = findViewById(R.id.debugInputEditText);
+        sendButton = findViewById(R.id.sendButton);
+        debugOutputTextView = findViewById(R.id.debugOutputTextView);
+
+        sendButton.setOnClickListener(v -> {
+            String message = debugInputEditText.getText().toString();
+
+            if (!message.isEmpty()) {
+                Log.d("DebugMessage", message);
+                debugOutputTextView.setText("Sent to debugger: " + message);
+                debugInputEditText.setText("");
+            }
+        });
+    }
+}

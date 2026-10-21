@@ -1,0 +1,77 @@
+pop notification
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#F5F5F5">
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="Student Notification App"
+        android:textSize="24sp"
+        android:textColor="#000000"
+        android:fontFamily="sans-serif-bold" />
+
+    <Button
+        android:id="@+id/toastButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Show Toast Notification" />
+
+    <Button
+        android:id="@+id/dialogButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toastButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Show Alert Dialog" />
+
+</RelativeLayout>
+
+
+java
+package com.example.studentapp;
+
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button toastButton = findViewById(R.id.toastButton);
+        Button dialogButton = findViewById(R.id.dialogButton);
+
+        toastButton.setOnClickListener(v ->
+            Toast.makeText(this, "Assignment due tomorrow!",
+                    Toast.LENGTH_LONG).show()
+        );
+
+        dialogButton.setOnClickListener(v ->
+            new AlertDialog.Builder(this)
+                .setTitle("Class Reminder")
+                .setMessage("Your next class is in 30 minutes.")
+                .setPositiveButton("OK", (dialog, which) ->
+                    dialog.dismiss())
+                .setNegativeButton("Snooze", (dialog, which) ->
+                    Toast.makeText(this, "Snoozed for 10 minutes",
+                            Toast.LENGTH_SHORT).show())
+                .show()
+        );
+    }
+}

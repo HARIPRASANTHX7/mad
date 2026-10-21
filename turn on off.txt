@@ -1,0 +1,94 @@
+turn on /off
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mobile Data Toggle"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Toggle Mobile Data"
+        android:textSize="18sp" />
+
+</LinearLayout>
+
+
+java
+package com.example.studentapp;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.lang.reflect.Method;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button toggleButton = findViewById(R.id.toggleButton);
+
+        toggleButton.setOnClickListener(v -> toggleMobileData());
+    }
+
+    private void toggleMobileData() {
+        try {
+            ConnectivityManager cm =
+                    (ConnectivityManager) getSystemService(
+                            Context.CONNECTIVITY_SERVICE);
+
+            Method getMethod =
+                    ConnectivityManager.class.getDeclaredMethod(
+                            "getMobileDataEnabled");
+
+            getMethod.setAccessible(true);
+
+            boolean isEnabled =
+                    (Boolean) getMethod.invoke(cm);
+
+            Method setMethod =
+                    ConnectivityManager.class.getDeclaredMethod(
+                            "setMobileDataEnabled",
+                            boolean.class);
+
+            setMethod.setAccessible(true);
+            setMethod.invoke(cm, !isEnabled);
+
+            Toast.makeText(this,
+                    "Mobile Data Toggle Requested",
+                    Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            Toast.makeText(this,
+                    "Mobile data cannot be changed",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+}
+
+
+
+<uses-permission
+    android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+<uses-permission
+    android:name="android.permission.ACCESS_NETWORK_STATE" />
